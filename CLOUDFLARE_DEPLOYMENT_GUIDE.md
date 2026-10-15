@@ -24,7 +24,7 @@ npx wrangler d1 create barishal-rokto-d1
 ```
 ✅ Successfully created DB 'barishal-rokto-d1' with ID '9f1a23b4-56c7-88d9-0e1f-23456789abcd'
 ```
-এই ID-টি `wrangler.jsonc` এবং `wrangler.toml` ফাইলের `database_id` ফিল্ডে বসিয়ে দিন।
+এই ID-টি `wrangler.jsonc` ফাইলের `database_id` ফিল্ডে বসিয়ে দিন।
 
 ---
 
@@ -59,7 +59,6 @@ npm run deploy:cf
 | ফাইল/ডিরেক্টরি | ভূমিকা ও বিবরণ |
 |---|---|
 | `wrangler.jsonc` | Cloudflare Pages & D1 কনফিগারেশন (D1 database binding `DB` এবং R2 bucket binding) |
-| `wrangler.toml` | Wrangler TOML সংস্করণ |
 | `migrations/0001_d1_schema.sql` | Cloudflare D1 সার্ভারলেস এসকিউএল স্কিমা (২৩টি টেবিল ও ইনডেক্স) |
 | `migrations/0002_d1_seed.sql` | প্রাথমিক ডেটাবেস সিড স্ক্রিপ্ট (বরিশাল বিভাগীয় হাসপাতাল, রক্তদাতা ও এডমিন একাউন্ট) |
 | `functions/api/[[route]].ts` | Cloudflare Pages Functions এজ হ্যান্ডলার যা সরাসরি Cloudflare D1 `env.DB` কুয়েরি করে |

@@ -28,7 +28,7 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
       ...options,
       headers,
     });
-    const data = await response.json();
+    const data: any = await response.json();
     if (!response.ok) {
       return {
         success: false,

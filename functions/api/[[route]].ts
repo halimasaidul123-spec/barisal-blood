@@ -49,7 +49,11 @@ export async function onRequest(context: EventContext): Promise<Response> {
     });
   }
 
-  const pathname = url.pathname;
+  let pathname = url.pathname;
+  // Normalize /api/... to /api/v1/... (e.g. /api/donors -> /api/v1/donors)
+  if (pathname.startsWith('/api/') && !pathname.startsWith('/api/v1/') && pathname !== '/api/health') {
+    pathname = pathname.replace(/^\/api\//, '/api/v1/');
+  }
 
   // 1. Health check
   if (pathname === '/api/health') {
@@ -77,14 +81,40 @@ export async function onRequest(context: EventContext): Promise<Response> {
     });
   }
 
-  // Ensure Cloudflare D1 database binding exists
+  // Provide status even if D1 is not bound yet to guide user during first setup
+  if (pathname === '/api/v1/d1/status' && !env.DB) {
+    return jsonResponse({
+      success: true,
+      data: {
+        database_name: 'barishal-rokto-d1',
+        region: 'apac-sgp (South East Asia / Dhaka)',
+        version: 'Pending D1 Binding',
+        tables_count: 0,
+        total_records: 0,
+        storage_size_kb: 0,
+        read_latency_ms: 0,
+        write_latency_ms: 0,
+        sync_state: 'binding_needed',
+        setup_instructions: 'Run `npx wrangler d1 create barishal-rokto-d1` and paste database_id into wrangler.jsonc or link it in Cloudflare Pages Dashboard.',
+        r2_binding: {
+          bucket: 'barishal-rokto-media',
+          total_objects: 0,
+          storage_mb: 0,
+          egress_cost_usd: 0,
+          cdn_cache_hit_rate: 100,
+        },
+      },
+    });
+  }
+
+  // Ensure Cloudflare D1 database binding exists for data queries
   if (!env.DB) {
     return jsonResponse(
       {
         success: false,
-        error: 'Cloudflare D1 Database binding "DB" is not bound. Please bind D1 in Cloudflare Pages dashboard or wrangler.jsonc.',
+        error: 'Cloudflare D1 Database binding "DB" is not bound yet. Please run `npx wrangler d1 create barishal-rokto-d1` and bind "DB" in Cloudflare Pages dashboard or wrangler.jsonc.',
       },
-      500
+      503
     );
   }
 

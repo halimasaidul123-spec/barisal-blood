@@ -58,17 +58,31 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// Mount Standardized Versioned REST API v1
-app.use('/api/v1/auth', authRoutes);
-app.use('/api/v1/donors', donorRoutes);
-app.use('/api/v1/requests', requestRoutes);
-app.use('/api/v1/hospitals', hospitalRoutes);
-app.use('/api/v1/notifications', notificationRoutes);
-app.use('/api/v1/reports', reportRoutes);
-app.use('/api/v1/admin', adminRoutes);
-app.use('/api/v1/ai', aiRoutes);
-app.use('/api/v1/r2', cloudflareRoutes);
-app.use('/api/v1/d1', cloudflareRoutes);
+// Mount API routes supporting both /api/v1/* and /api/* paths seamlessly
+const mountApiRoutes = (prefix: string) => {
+  app.use(`${prefix}/auth`, authRoutes);
+  app.use(`${prefix}/donors`, donorRoutes);
+  app.use(`${prefix}/requests`, requestRoutes);
+  app.use(`${prefix}/hospitals`, hospitalRoutes);
+  app.use(`${prefix}/notifications`, notificationRoutes);
+  app.use(`${prefix}/reports`, reportRoutes);
+  app.use(`${prefix}/admin`, adminRoutes);
+  app.use(`${prefix}/ai`, aiRoutes);
+  app.use(`${prefix}/r2`, cloudflareRoutes);
+  app.use(`${prefix}/d1`, cloudflareRoutes);
+  app.use(`${prefix}/cloudflare`, cloudflareRoutes);
+};
+
+mountApiRoutes('/api/v1');
+mountApiRoutes('/api');
+
+// Never return HTML for /api/* requests; return clean JSON 404
+app.all('/api/*', (req, res) => {
+  res.status(404).json({
+    success: false,
+    error: `API endpoint not found: ${req.method} ${req.originalUrl}`,
+  });
+});
 
 // Frontend integration: Vite middleware in dev, static files in production
 async function startServer() {

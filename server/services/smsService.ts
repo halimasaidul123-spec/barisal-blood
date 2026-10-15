@@ -28,7 +28,7 @@ export class GenericWebhookSMSProvider implements SMSProvider {
         },
         body: JSON.stringify({ to: phone, message: text })
       });
-      const data = await response.json();
+      const data = (await response.json()) as any;
       return { success: response.ok, providerId: data?.id };
     } catch (err: any) {
       console.error('[SMS-SERVICE] Delivery failed:', err?.message);
