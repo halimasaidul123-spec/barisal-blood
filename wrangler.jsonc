@@ -1,0 +1,33 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "barishal-rokto",
+  "compatibility_date": "2024-09-23",
+  "compatibility_flags": ["nodejs_compat"],
+  "pages_build_output_dir": "./dist",
+  
+  // Cloudflare D1 Serverless SQL Database Binding
+  // Binding name: DB (available in Functions via env.DB)
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "barishal-rokto-d1",
+      "database_id": "9f1a23b4-56c7-88d9-0e1f-23456789abcd",
+      "migrations_dir": "./migrations"
+    }
+  ],
+
+  // Cloudflare R2 Object Storage Bucket Binding (Media, Avatars, Albums)
+  "r2_buckets": [
+    {
+      "binding": "R2_BUCKET",
+      "bucket_name": "barishal-rokto-media"
+    }
+  ],
+
+  // Environment variables accessible in Edge Functions
+  "vars": {
+    "APP_NAME": "বরিশাল রক্ত (Barishal Rokto)",
+    "ENVIRONMENT": "production",
+    "EDGE_REGION": "APAC"
+  }
+}
